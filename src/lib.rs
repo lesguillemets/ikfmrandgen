@@ -5,9 +5,9 @@ pub type Condition = u8;
 pub type Emotion = u8;
 pub type Sequence = Vec<(Condition, Emotion)>;
 
-const N_EMOTE: u8 = 5;
 // TODO: don't write by hand
 const N_COND: u8 = 2 * 3;
+const N_EMOTE: u8 = 5;
 
 pub fn generate_seq<R: Rng>(rng: &mut R) -> Sequence {
     let mut groups: Vec<Vec<(Condition, Emotion)>> = vec![vec![]; N_EMOTE as usize];
