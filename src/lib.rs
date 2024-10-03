@@ -19,7 +19,7 @@ pub fn generate_and_filter<R: Rng>(rng: &mut R) -> Sequence {
     loop {
         c += 1;
         let seq = generate_seq(rng);
-        if succ_times(&seq) <= 4 && maximum_succ(&seq) < 3 {
+        if succ_times(&seq) <= 3 && maximum_succ(&seq) < 3 {
             println!("found one after {} generations", c);
             return seq;
         }
@@ -59,6 +59,20 @@ fn deal_emote_to_groups<R: Rng>(rng: &mut R) -> Vec<Emotion> {
     cards.shuffle(rng);
     cards
 }
+
+fn cond_to_pair(c: Condition) -> (Condition, Condition) {
+    (c / 2, c % 2)
+}
+
+pub fn print_seq(s: Sequence) {
+    println!("VF\tRef\tEmotion");
+    for (c, e) in s {
+        let (vf, re) = cond_to_pair(c);
+        println!("{}\t{}\t{}", vf, re, e);
+    }
+}
+
+/// VALIDATORS
 
 fn succ_times(s: &Sequence) -> usize {
     // number of times when the emotion seen in a trial is the same
