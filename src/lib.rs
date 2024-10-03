@@ -32,8 +32,9 @@ pub fn generate_seq<R: Rng>(rng: &mut R) -> Sequence {
         }
     }
     let seq: Sequence = groups.into_iter().flatten().collect();
-    assert_eq!(seq.len(), (N_EMOTE * N_COND) as usize);
     {
+        // when sorted, this resulting sequence is the
+        // same as the SIMPLE_SEQ.
         let mut validate: Sequence = seq.clone();
         validate.sort_by(|(c0, e0), (c1, e1)| (e0, c0).cmp(&(e1, c1)));
         assert_eq!(&validate, &SIMPLE_SEQ);
