@@ -19,7 +19,7 @@ pub fn generate_and_filter<R: Rng>(rng: &mut R) -> Sequence {
     loop {
         c += 1;
         let seq = generate_seq(rng);
-        if succ_times(&seq) <= 3 && maximum_succ(&seq) < 3 {
+        if succ_times(&seq) <= 2 && maximum_succ(&seq) < 3 {
             println!("found one after {} generations", c);
             return seq;
         }
