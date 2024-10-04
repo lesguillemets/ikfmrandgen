@@ -14,13 +14,18 @@ const N_EMOTE: u8 = 5;
 
 const DEBUG: bool = false;
 
+const HEADER: &str = "index,condition1,condition2,layout,emotion,procedure\n";
+#[allow(clippy::erasing_op)]
+#[allow(clippy::identity_op)]
+const TUTORIAL: [(Condition, Emotion); 3] = [((2 * 1 + 1), 6), ((2 * 2 + 0), 7), ((2 * 0 + 1), 8)];
+
 pub fn generate_and_filter<R: Rng>(rng: &mut R) -> Sequence {
     let mut c = 0;
     loop {
         c += 1;
         let seq = generate_seq(rng);
         if succ_times(&seq) <= 2 && maximum_succ(&seq) < 3 {
-            println!("found one after {} generations", c);
+            eprintln!("found one after {} generations", c);
             return seq;
         }
     }
@@ -52,6 +57,29 @@ pub fn generate_seq<R: Rng>(rng: &mut R) -> Sequence {
         assert_eq!(&validate, &SIMPLE_SEQ);
     }
     seq
+}
+
+pub fn to_csv<R: Rng>(rng: &mut R, s: Sequence) -> String {
+    let length = s.len() + TUTORIAL.len();
+    let mut layouts: Vec<u8> = vec![0; length / 2];
+    layouts.extend(vec![1; length - length / 2]);
+    layouts.shuffle(rng);
+    let layouts = layouts;
+    let mut text = String::from(HEADER);
+    let mut index = 0;
+    for (&(c, e), &l) in (TUTORIAL.iter()).chain(&s).zip(&layouts) {
+        index += 1;
+        let (vf, re) = cond_to_pair(c);
+        let procedure = if index <= TUTORIAL.len() { 0 } else { 1 };
+        let line = [index, vf.into(), re.into(), l.into(), e.into(), procedure]
+            .iter()
+            .map(|s| format!("{}", s))
+            .collect::<Vec<_>>()
+            .join(",");
+        text.push_str(&line);
+        text.push('\n');
+    }
+    text
 }
 
 fn deal_emote_to_groups<R: Rng>(rng: &mut R) -> Vec<Emotion> {

@@ -1,8 +1,8 @@
-use ikfmrandgen::{generate_and_filter, print_seq};
+use ikfmrandgen::{generate_and_filter, to_csv};
 use rand::prelude::*;
 fn main() {
     let mut rng = thread_rng();
     let seq = generate_and_filter(&mut rng);
-    println!("__________________");
-    print_seq(seq);
+    eprintln!("__________________");
+    println!("{}", to_csv(&mut rng, seq));
 }
