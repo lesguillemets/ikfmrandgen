@@ -4,6 +4,8 @@ use consts::SIMPLE_SEQ;
 use rand::seq::SliceRandom;
 use rand::Rng;
 
+use std::collections::HashSet;
+
 pub type Condition = u8;
 pub type Emotion = u8;
 pub type Sequence = Vec<(Condition, Emotion)>;
@@ -24,7 +26,7 @@ pub fn generate_and_filter<R: Rng>(rng: &mut R) -> Sequence {
     loop {
         c += 1;
         let seq = generate_seq(rng);
-        if succ_times(&seq) <= 2 && maximum_succ(&seq) < 3 {
+        if succ_times(&seq) <= 2 && maximum_succ(&seq) < 3 && minimum_exps(&seq) >= 4 {
             eprintln!("found one after {} generations", c);
             return seq;
         }
@@ -127,4 +129,17 @@ fn maximum_succ(s: &Sequence) -> usize {
         }
     }
     m
+}
+
+fn minimum_exps(s: &Sequence) -> usize {
+    let mut minimum = usize::MAX;
+    for group in s.chunks(N_COND as usize) {
+        let emotions_in_group = group
+            .iter()
+            .map(|d| d.1)
+            .collect::<HashSet<Emotion>>()
+            .len();
+        minimum = minimum.min(emotions_in_group);
+    }
+    minimum
 }
