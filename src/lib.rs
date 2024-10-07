@@ -62,10 +62,15 @@ pub fn generate_seq<R: Rng>(rng: &mut R) -> Sequence {
 }
 
 pub fn to_csv<R: Rng>(rng: &mut R, s: Sequence) -> String {
-    let length = s.len() + TUTORIAL.len();
-    let mut layouts: Vec<u8> = vec![0; length / 2];
-    layouts.extend(vec![1; length - length / 2]);
-    layouts.shuffle(rng);
+    let length = s.len();
+    // in the tutorial, layout is always 0
+    let mut layouts: Vec<u8> = vec![0; TUTORIAL.len()];
+    // in the main test, it is shuffled
+    let mut main_layouts: Vec<u8> = vec![0; length / 2];
+    main_layouts.extend(vec![1; length - length / 2]);
+    main_layouts.shuffle(rng);
+    layouts.extend(main_layouts);
+    // hide mutability
     let layouts = layouts;
     let mut text = String::from(HEADER);
     let mut index = 0;
